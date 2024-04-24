@@ -4,6 +4,7 @@ import HouseholdSummary from "./HouseholdSummary/HouseholdSummary";
 import SalaryCalculator from "./SalaryCalculator/SalaryCalculator";
 
 const HouseholdSalaryCalculator = () => {
+  console.log("HouseholdSalaryCalculator");
   return (
     <div className={cn("flex flex-col gap-4")}>
       <header>

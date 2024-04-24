@@ -9,6 +9,7 @@ import { Dialog } from "../atom/Dialog";
 import Trash from "../atom/icons/Trash";
 import { Button } from "../atom/Button";
 import PlusMinus from "../atom/PlusMinus";
+import MarriageEligible from "../MarriageEligible";
 
 const SalaryCalculator = () => {
   const {
@@ -22,8 +23,6 @@ const SalaryCalculator = () => {
     handleCsaladiChange,
     deleteMember,
     saveMarriedAt,
-    eligibleForMarriageDiscount,
-    calcNetSalary,
   } = useMainContext();
   const [marriedAtOpen, setMarriedAtOpen] = useState(false);
   const [marriedAtValid, setMarriedAtValid] = useState("unchanged");
@@ -159,33 +158,7 @@ const SalaryCalculator = () => {
               </p>
               {discount.key === "friss_hazasok" &&
                 members[activeMember].discounts["friss_hazasok"] && (
-                  <div className={cn("flex h-6 gap-2")}>
-                    <button
-                      className={cn(
-                        "flex h-full items-center justify-center rounded-full bg-gray-700 px-2.5 text-xs font-semibold text-gray-100",
-                      )}
-                      onClick={() => setMarriedAtOpen(true)}
-                    >
-                      Dátum{" "}
-                      {members[activeMember].marriedAt === null
-                        ? "hozzáadása"
-                        : "szerkesztése"}
-                    </button>
-                    <span
-                      className={cn(
-                        "flex h-full select-none items-center justify-center rounded-full border px-2.5 text-xs font-semibold text-gray-100 opacity-0 transition-opacity",
-                        members[activeMember].discounts["friss_hazasok"] &&
-                          "opacity-100",
-                        eligibleForMarriageDiscount(members[activeMember])
-                          ? "bg-green-500 "
-                          : "bg-red-500",
-                      )}
-                    >
-                      {eligibleForMarriageDiscount(members[activeMember])
-                        ? "Jogosult"
-                        : "Nem jogosult"}
-                    </span>
-                  </div>
+                  <MarriageEligible setMarriedAtOpen={setMarriedAtOpen} />
                 )}
               {discount.key === "csaladi_kedvezmeny" &&
                 members[activeMember].discounts["csaladi_kedvezmeny"] && (

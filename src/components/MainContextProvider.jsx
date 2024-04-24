@@ -64,6 +64,7 @@ export const MainContextProvider = ({ children }) => {
     const newMembers = [...members];
     newMembers[activeMember].salary = e.target.value;
     setMembers(newMembers);
+    calcNetSalary(newMembers[activeMember]);
   };
 
   const handleSalaryChangeByPercent = (percent) => {
@@ -72,12 +73,14 @@ export const MainContextProvider = ({ children }) => {
       newMembers[activeMember].salary * percent,
     );
     setMembers(newMembers);
+    calcNetSalary(newMembers[activeMember]);
   };
 
   const handleSalaryChangeBySlider = (value) => {
     const newMembers = [...members];
     newMembers[activeMember].salary = value;
     setMembers(newMembers);
+    calcNetSalary(newMembers[activeMember]);
   };
 
   const handleDiscountChange = (key) => {
@@ -85,12 +88,14 @@ export const MainContextProvider = ({ children }) => {
     newMembers[activeMember].discounts[key] =
       !newMembers[activeMember].discounts[key];
     setMembers(newMembers);
+    calcNetSalary(newMembers[activeMember]);
   };
 
   const handleCsaladiChange = (key, value) => {
     const newMembers = [...members];
     newMembers[activeMember].csaladi[key] = value;
     setMembers(newMembers);
+    calcNetSalary(newMembers[activeMember]);
   };
 
   const saveMarriedAt = (marriedAt) => {
@@ -98,7 +103,16 @@ export const MainContextProvider = ({ children }) => {
     newMembers[activeMember].marriedAt = marriedAt;
     setMembers(newMembers);
     emitToast("Házasság dátuma elmentve", "success");
+    calcNetSalary(newMembers[activeMember]);
   };
+
+  function monthDiff(d1, d2) {
+    var months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
+  }
 
   const eligibleForMarriageDiscount = (member) => {
     if (!member.marriedAt) return false;
@@ -106,18 +120,15 @@ export const MainContextProvider = ({ children }) => {
     const marriageDate = new Date(member.marriedAt);
     const now = new Date();
 
-    const yearsDiff = now.getFullYear() - marriageDate.getFullYear();
-    const monthsDiff = now.getMonth() - marriageDate.getMonth();
+    let monthsDiff = monthDiff(marriageDate, now);
 
-    if (yearsDiff === 0 && monthsDiff === 0) {
-      return false;
+    console.log(monthsDiff);
+
+    // check also if the marriage is fresh is it more than a month ago
+    if (monthsDiff <= 24 && monthsDiff > 0) {
+      return true;
     }
-
-    if (yearsDiff < 2 || (yearsDiff === 2 && monthsDiff < 0)) {
-      return false;
-    }
-
-    return yearsDiff === 2 && monthsDiff >= 0;
+    return false;
   };
 
   const calcNetSalary = (member) => {
@@ -161,11 +172,6 @@ export const MainContextProvider = ({ children }) => {
     newMembers[activeMember].netSalary = Math.round(member.salary - taxes);
     setMembers(newMembers);
   };
-
-  useEffect(() => {
-    if (!members[activeMember]) return;
-    calcNetSalary(members[activeMember]);
-  }, [members]);
 
   const contextValues = {
     members,
